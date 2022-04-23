@@ -5,7 +5,7 @@ import { GraticuleLayerSettings } from './GraticuleLayerSettings';
 import { MapContext } from './MapContext';
 import { MapSettings } from './MapSettings';
 import { MapState } from './MapState';
-import { getInterpolator } from './MyHelper';
+import { MyHelper } from './MyHelper';
 import { TileLayerSettings } from './TileLayerSettings';
 
 export function GraticuleLayer(props: Readonly<{
@@ -30,7 +30,7 @@ export function GraticuleLayer(props: Readonly<{
 	const top = distanceToCenterY - height * 0.5;
 	const minMeteres = -20_037_508.3427892;
 	const maxMeteres = 20_037_508.3427892;
-	const metersToFloat = getInterpolator([minMeteres, maxMeteres], [0, 1]);
+	const metersToFloat = MyHelper.getInterpolator([minMeteres, maxMeteres], [0, 1]);
 	const isFloatInsideScreenW = (float: number) => {
 		const screenPosX = -left + worldSize * float;
 		return screenPosX <= width && screenPosX >= 0;
@@ -56,7 +56,7 @@ export function GraticuleLayer(props: Readonly<{
 	const gratDash = [2, 4];
 
 	const textSize = 12;
-	// console.log(-left, -left + worldSize);
+
 	for (let i = 0; i < 90; i += latitudeStep) {
 		if (!isMapVisible()) {
 			break;
@@ -166,9 +166,6 @@ export function GraticuleLayer(props: Readonly<{
 			texts.push(rightText);
 		}
 	}
-	// console.log(`rendered ${lines.length} lines`);
-	// console.log(isMapVisible());
-	// console.log(-left, right);
 
 	return (
 		<Stage x={0} y={0} width={width} height={height}>

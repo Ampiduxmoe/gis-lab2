@@ -10,7 +10,7 @@ import { MapContext } from './MapContext';
 import { defaultMapSettings, MapSettings } from './MapSettings';
 import { defaultMapState, MapState } from './MapState';
 import './MapWidget.css';
-import { clamp } from './MyHelper';
+import { MyHelper } from './MyHelper';
 import { TileLayer } from './TileLayer';
 import { defaultTileLayerSettings, TileLayerSettings } from './TileLayerSettings';
 
@@ -20,7 +20,7 @@ export function MapWidget(props: Partial<Readonly<{
 	onMapStateChange: (mapState: Readonly<MapState>) => void;
 	tileLayerSettings: Readonly<TileLayerSettings>;
 	graticuleLayerSettings: Readonly<GraticuleLayerSettings>;
-	onGraticuleLayerSettingsChange: (graticuleLayerSettings: Readonly<GraticuleLayerSettings>) => void;
+	setGraticuleLayerSettings: (graticuleLayerSettings: Readonly<GraticuleLayerSettings>) => void;
 }>> & CommonProps) {
 	const [internalMapState, setInternalMapState] = useState<Readonly<MapState>>(() => {
 		return props.mapState ?? defaultMapState;
@@ -32,22 +32,12 @@ export function MapWidget(props: Partial<Readonly<{
 			onMapStateChange(internalMapState);
 		}
 	}, [internalMapState, onMapStateChange]);
-	const [internalGraticuleLayerSettings, setInternalGraticuleLayerSettings] = useState<Readonly<GraticuleLayerSettings>>(() => {
-		return props.graticuleLayerSettings ?? defaultGraticuleLayerSettings;
-	});
-	const graticuleLayerSettings = props.graticuleLayerSettings ?? internalGraticuleLayerSettings;
-	const onGraticuleLayerSettingsChange = props.onGraticuleLayerSettingsChange;
-	useEffect(() => {
-		if (onGraticuleLayerSettingsChange) {
-			onGraticuleLayerSettingsChange(internalGraticuleLayerSettings);
-		}
-	}, [internalGraticuleLayerSettings, onGraticuleLayerSettingsChange]);
 	const mapSettings = props.mapSettings ?? defaultMapSettings;
 	const { minZoom, maxZoom, wheelSpeed } = mapSettings;
+	const graticuleLayerSettings = props.graticuleLayerSettings ?? defaultGraticuleLayerSettings;
+	const setGraticuleLayerSettings = props.setGraticuleLayerSettings;
 	const tileLayerSettings = props.tileLayerSettings ?? defaultTileLayerSettings;
 	const mapZoom = Math.max(minZoom, Math.min(mapState.mapZoom, maxZoom));
-	const zoom = mapZoom - Math.log2(tileLayerSettings.tileSize);
-	const roundedZoom = Math.max(0, Math.min(maxZoom, Math.round(zoom)));
 	const worldSize = Math.pow(2, mapZoom);
 	const [dragStartState, setDragStartState] = useState(mapState);
 	const bindGesture = useGesture({
@@ -72,19 +62,22 @@ export function MapWidget(props: Partial<Readonly<{
 				...mapState,
 				mapZoom: mapZoom - event.delta[1] * zoomSpeed,
 			});
-			setInternalGraticuleLayerSettings({
-				...graticuleLayerSettings,
-				latitudeStep: clamp(
-					graticuleLayerSettings.latitudeStepDefault / 2 ** (roundedZoom - 1),
-					graticuleLayerSettings.minStep,
-					graticuleLayerSettings.maxStep,
-				),
-				longitudeStep: clamp(
-					graticuleLayerSettings.longitudeStepDefault / 2 ** (roundedZoom - 1),
-					graticuleLayerSettings.minStep,
-					graticuleLayerSettings.maxStep,
-				),
-			});
+			if (setGraticuleLayerSettings) {
+				const partitionPower = Math.max(0, Math.min(maxZoom, Math.round(mapZoom - Math.log2(tileLayerSettings.tileSize))));
+				setGraticuleLayerSettings({
+					...graticuleLayerSettings,
+					latitudeStep: MyHelper.clamp(
+						graticuleLayerSettings.latitudeStepDefault / 2 ** (partitionPower - 1),
+						graticuleLayerSettings.minStep,
+						graticuleLayerSettings.maxStep,
+					),
+					longitudeStep: MyHelper.clamp(
+						graticuleLayerSettings.longitudeStepDefault / 2 ** (partitionPower	 - 1),
+						graticuleLayerSettings.minStep,
+						graticuleLayerSettings.maxStep,
+					),
+				});
+			}
 		},
 	});
 	const [mapContext, setMapContext] = useState<MapContext>(() => {

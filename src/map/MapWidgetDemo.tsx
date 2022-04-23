@@ -100,9 +100,9 @@ export function MapWidgetDemo() {
 			<MapWidget
 				mapState={mapState}
 				onMapStateChange={setMapState}
-				onGraticuleLayerSettingsChange={setGraticuleLayerSettings}
 				mapSettings={mapSettings}
 				graticuleLayerSettings={graticuleLayerSettigs}
+				setGraticuleLayerSettings={setGraticuleLayerSettings}
 				style={{
 					maxWidth,
 					maxHeight,
