@@ -1,7 +1,7 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import { useGesture } from '@use-gesture/react';
 import classNames from 'classnames';
-import { useEffect, useRef, useState, VoidFunctionComponent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CommonProps } from '../common/CommonProps';
 import { DebugOverlay } from './DebugOverlay';
 import { GraticuleLayer } from './GraticuleLayer';

@@ -15,11 +15,10 @@ export function GraticuleLayer(props: Readonly<{
 	tileLayerSettings: TileLayerSettings;
 	graticuleLayerSettings: GraticuleLayerSettings;
 }> & CommonProps) {
-	const { mapContext, mapState, mapSettings, tileLayerSettings, graticuleLayerSettings } = props;
-	const { latitudeStepDefault, longitudeStepDefault, latitudeStep, longitudeStep, minStep, maxStep } = graticuleLayerSettings;
+	const { mapContext, mapState, tileLayerSettings, graticuleLayerSettings } = props;
+	const { latitudeStep, longitudeStep } = graticuleLayerSettings;
 	const { centerX, centerY, mapZoom } = mapState;
 	const { width, height } = mapContext;
-	const { debug } = mapSettings;
 	const { tileSize, maxZoom } = tileLayerSettings;
 	const zoom = mapZoom - Math.log2(tileSize);
 	const roundedZoom = Math.max(0, Math.min(maxZoom, Math.round(zoom)));
@@ -28,9 +27,7 @@ export function GraticuleLayer(props: Readonly<{
 	const distanceToCenterX = centerX * worldSize;
 	const distanceToCenterY = centerY * worldSize;
 	const left = distanceToCenterX - width * 0.5;
-	const right = distanceToCenterX + width * 0.5;
 	const top = distanceToCenterY - height * 0.5;
-	const bottom = distanceToCenterY + height * 0.5;
 	const minMeteres = -20_037_508.3427892;
 	const maxMeteres = 20_037_508.3427892;
 	const metersToFloat = getInterpolator([minMeteres, maxMeteres], [0, 1]);
