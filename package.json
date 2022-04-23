@@ -78,5 +78,8 @@
 		"presets": [
 			"react-app"
 		]
+	},
+	"devDependencies": {
+		"konva": "^8.3.5"
 	}
 }

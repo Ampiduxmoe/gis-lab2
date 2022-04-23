@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { CommonProps } from '../common/CommonProps';
 import { DebugOverlay } from './DebugOverlay';
+import { GraticuleLayer } from './GraticuleLayer';
+import { defaultGraticuleLayerSettings, GraticuleLayerSettings } from './GraticuleLayerSettings';
 import { MapContext } from './MapContext';
 import { defaultMapSettings, MapSettings } from './MapSettings';
 import { defaultMapState, MapState } from './MapState';
@@ -16,6 +18,7 @@ export function MapWidget(props: Partial<Readonly<{
 	mapState: MapState;
 	onMapStateChange: (mapState: Readonly<MapState>) => void;
 	tileLayerSettings: Readonly<TileLayerSettings>;
+	graticuleLayerSettings: Readonly<GraticuleLayerSettings>;
 }>> & CommonProps) {
 	const [internalMapState, setInternalMapState] = useState<Readonly<MapState>>(() => {
 		return props.mapState ?? defaultMapState;
@@ -71,6 +74,7 @@ export function MapWidget(props: Partial<Readonly<{
 		});
 	});
 	const tileLayerSettings = props.tileLayerSettings ?? defaultTileLayerSettings;
+	const graticuleLayerSettings = props.graticuleLayerSettings ?? defaultGraticuleLayerSettings;
 	return <div
 		{...bindGesture()}
 		ref={mainElement}
@@ -85,6 +89,13 @@ export function MapWidget(props: Partial<Readonly<{
 			mapState={mapState}
 			tileLayerSettings={tileLayerSettings}
 		></TileLayer>
+		<GraticuleLayer
+			mapContext={mapContext}
+			mapSettings={mapSettings}
+			mapState={mapState}
+			tileLayerSettings={tileLayerSettings}
+			graticuleLayerSettings={graticuleLayerSettings}
+		></GraticuleLayer>
 		{mapSettings.debug &&
 			<DebugOverlay style={{ left: 0, top: 0, minWidth: 300 }}>
 				{JSON.stringify({

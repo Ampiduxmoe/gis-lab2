@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Labelled } from '../common/Labelled';
 import { NumberInput } from '../common/NumberInput';
+import { defaultGraticuleLayerSettings, GraticuleLayerSettings } from './GraticuleLayerSettings';
 import { defaultMapSettings, MapSettings } from './MapSettings';
 import { defaultMapState, MapState } from './MapState';
 import { MapWidget } from './MapWidget';
@@ -11,6 +12,7 @@ export function MapWidgetDemo() {
 	const [maxHeight, setMaxHeight] = useState<number>(1000);
 	const [mapState, setMapState] = useState<MapState>(defaultMapState);
 	const [mapSettings, setMapSettings] = useState<MapSettings>(defaultMapSettings);
+	const [graticuleLayerSettigs, setGraticuleLayerSettings] = useState<GraticuleLayerSettings>(defaultGraticuleLayerSettings);
 	const centerStep = 10 * Math.pow(0.5, mapState.mapZoom);
 	return (
 		<div className="MapWidgetDemo">
@@ -76,11 +78,30 @@ export function MapWidgetDemo() {
 						onChange={event => setMapSettings({ ...mapSettings, debug: event.target.checked })}
 					></input>
 				</Labelled>
+				<Labelled label="latitude step">
+					<NumberInput
+						min={graticuleLayerSettigs.minStep}
+						max={graticuleLayerSettigs.maxStep}
+						step={1.0}
+						value={graticuleLayerSettigs.latitudeStep}
+						onChange={value => setGraticuleLayerSettings({ ...graticuleLayerSettigs, latitudeStep: value })}
+					></NumberInput>
+				</Labelled>
+				<Labelled label="longitude step">
+					<NumberInput
+						min={graticuleLayerSettigs.minStep}
+						max={graticuleLayerSettigs.maxStep}
+						step={1.0}
+						value={graticuleLayerSettigs.longitudeStep}
+						onChange={value => setGraticuleLayerSettings({ ...graticuleLayerSettigs, longitudeStep: value })}
+					></NumberInput>
+				</Labelled>
 			</div>
 			<MapWidget
 				mapState={mapState}
 				onMapStateChange={setMapState}
 				mapSettings={mapSettings}
+				graticuleLayerSettings={graticuleLayerSettigs}
 				style={{
 					maxWidth,
 					maxHeight,
