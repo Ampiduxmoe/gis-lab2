@@ -9,3 +9,7 @@ export function lerp(value: number, fromBounds: number[], toBounds: number[]) {
 export function getInterpolator(fromBounds: number[], toBounds: number[]) {
 	return (value: number) => lerp(value, fromBounds, toBounds);
 }
+
+export function clamp(value: number, min: number, max: number) {
+	return Math.max(min, Math.min(max, value));
+}

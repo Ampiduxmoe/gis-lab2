@@ -1,10 +1,10 @@
 class GraticuleLayerSettingsClass {
-	readonly latitudeStepDefault: number = 20;
-	readonly longitudeStepDefault: number = 40;
-	readonly latitudeStep: number = 20;
-	readonly longitudeStep: number = 40;
-	readonly minStep: number = 0.1;
-	readonly maxStep: number = 60;
+	readonly latitudeStepDefault: number = 40;
+	readonly longitudeStepDefault: number = 80;
+	readonly latitudeStep: number = 40;
+	readonly longitudeStep: number = 80;
+	readonly minStep: number = 1;
+	readonly maxStep: number = 100;
 }
 
 export type GraticuleLayerSettings = Readonly<GraticuleLayerSettingsClass>;
