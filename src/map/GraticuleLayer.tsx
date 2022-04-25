@@ -61,109 +61,74 @@ export function GraticuleLayer(props: Readonly<{
 		if (!isMapVisible()) {
 			break;
 		}
-		const latitudeInMeters = proj4('EPSG:4326', 'EPSG:3857', [0, i])[1];
-		const latitudeFloat = metersToFloat(latitudeInMeters);
-		const latitudePosUpper = -top + worldSize * (1 - latitudeFloat);
-		const latitudePosLower = -top + worldSize * latitudeFloat;
-		const posX = Math.max(0, -left);
-		const lineLength = worldSize;
-		const points = [0, 0, lineLength, 0];
-		if (isFloatInsideScreenH(1 - latitudeFloat)) {
-			const topLine = <Line
-				key={`latitude${-i}`}
-				x={-left}
-				y={latitudePosUpper}
-				points={points}
-				stroke={gratStrokeColor}
-				strokeWidth={gratStrokeWidth}
-				dash={gratDash}
-			/>;
-			lines.push(topLine);
-			const topText = <Text
-				key={`latText${-i}`}
-				x={posX}
-				y={latitudePosUpper}
-				fontSize={textSize}
-				text={`${i} grad`}
-			/>;
-			texts.push(topText);
-			if (i === 0) {
+		for (const sign of [-1, 1]) {
+			if (i === 0 && sign === -1) {
 				continue;
 			}
-		}
-		if (isFloatInsideScreenH(latitudeFloat)) {
-			const bottomLine = <Line
-				key={`latitude${i}`}
-				x={-left}
-				y={latitudePosLower}
-				points={points}
-				stroke={gratStrokeColor}
-				strokeWidth={gratStrokeWidth}
-				dash={gratDash}
-			/>;
-			lines.push(bottomLine);
-			const bottomText = <Text
-				key={`latText${i}`}
-				x={posX}
-				y={latitudePosLower}
-				fontSize={textSize}
-				text={`${i} grad`}
-			/>;
-			texts.push(bottomText);
+			const latitudeInMeters = proj4('EPSG:4326', 'EPSG:3857', [0, sign * i])[1];
+			const latitudeFloat = metersToFloat(latitudeInMeters);
+			const latitudePosX = -left;
+			const latitudePosY = -top + worldSize * latitudeFloat;
+			const textPosX = Math.max(0, -left);
+			const lineLength = worldSize;
+			const points = [0, 0, lineLength, 0];
+			if (isFloatInsideScreenH(latitudeFloat)) {
+				const line = <Line
+					key={`latitude${sign * i}`}
+					x={latitudePosX}
+					y={latitudePosY}
+					points={points}
+					stroke={gratStrokeColor}
+					strokeWidth={gratStrokeWidth}
+					dash={gratDash}
+				/>;
+				lines.push(line);
+				const text = <Text
+					key={`latText${sign * i}`}
+					x={textPosX}
+					y={latitudePosY}
+					fontSize={textSize}
+					text={`${i} grad`}
+				/>;
+				texts.push(text);
+			}
 		}
 	}
 	for (let j = 0; j < 180; j += longitudeStep) {
 		if (!isMapVisible()) {
 			break;
 		}
-		const longitudeInMeters = proj4('EPSG:4326', 'EPSG:3857', [j, 0])[0];
-		const longitudeFloat = metersToFloat(longitudeInMeters);
-		const longitudePosLeft = -left - worldSize * (longitudeFloat - 1);
-		const longitudePosRight = -left + worldSize * longitudeFloat;
-		const posY = Math.min(-top + worldSize - textSize, height - textSize);
-		const points = [0, 0, 0, worldSize];
-		if (isFloatInsideScreenW(1 - longitudeFloat)) {
-			const leftLine = <Line
-				key={`longitude${-j}`}
-				x={longitudePosLeft}
-				y={-top}
-				points={points}
-				stroke={gratStrokeColor}
-				strokeWidth={gratStrokeWidth}
-				dash={gratDash}
-			/>;
-			lines.push(leftLine);
-			const leftText = <Text
-				key={`longText${-j}`}
-				x={longitudePosLeft}
-				y={posY}
-				fontSize={textSize}
-				text={`${j} grad`}
-			/>;
-			texts.push(leftText);
-			if (j === 0) {
+		for (const sign of [-1, 1]) {
+			if (j === 0 && sign === -1) {
 				continue;
 			}
-		}
-		if (isFloatInsideScreenW(longitudeFloat)) {
-			const rightLine = <Line
-				key={`longitude${j}`}
-				x={longitudePosRight}
-				y={-top}
-				points={points}
-				stroke={gratStrokeColor}
-				strokeWidth={gratStrokeWidth}
-				dash={gratDash}
-			/>;
-			lines.push(rightLine);
-			const rightText = <Text
-				key={`longText${j}`}
-				x={longitudePosRight}
-				y={posY}
-				fontSize={textSize}
-				text={`${j} grad`}
-			/>;
-			texts.push(rightText);
+			const longitudeInMeters = proj4('EPSG:4326', 'EPSG:3857', [sign * j, 0])[0];
+			const longitudeFloat = metersToFloat(longitudeInMeters);
+			const longitudePosX = -left + worldSize * longitudeFloat;
+			const longitudePosY = -top;
+			const textPosY = Math.min(-top + worldSize - textSize, height - textSize);
+			const lineLength = worldSize;
+			const points = [0, 0, 0, lineLength];
+			if (isFloatInsideScreenW(longitudeFloat)) {
+				const line = <Line
+					key={`longitude${sign * j}`}
+					x={longitudePosX}
+					y={longitudePosY}
+					points={points}
+					stroke={gratStrokeColor}
+					strokeWidth={gratStrokeWidth}
+					dash={gratDash}
+				/>;
+				lines.push(line);
+				const text = <Text
+					key={`longText${sign * j}`}
+					x={longitudePosX}
+					y={textPosY}
+					fontSize={textSize}
+					text={`${j} grad`}
+				/>;
+				texts.push(text);
+			}
 		}
 	}
 
